@@ -1,7 +1,7 @@
 import app from "./index.js";
 
-const startServer = (port: number) => {
-  app.listen(port, () => {
+const startServer = (port: string | number) => {
+  app.listen(Number(port), () => {
     console.log(`Listening on "endpoint"`);
   });
 };
