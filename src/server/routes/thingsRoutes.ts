@@ -1,8 +1,9 @@
 import express from "express";
-import { getThings } from "../controllers/thingsControllers.js";
+import { getThingById, getThings } from "../controllers/thingsControllers.js";
 
 export const thingsRoutes = express.Router();
 
-thingsRoutes.get("/things", getThings);
+thingsRoutes.get("/", getThings);
+thingsRoutes.get("/:idThing", getThingById);
 
 export default thingsRoutes;
