@@ -1,15 +1,15 @@
 import { type Request, type Response } from "express";
-import knownThings from "../data/things.js";
-import { type Thing } from "../data/types.js";
-import { type CustomRequest } from "./types.js";
+import knownThings from "../../data/things.js";
+import { type Thing } from "../../data/types";
+import { type CustomRequest } from "../types";
 
-export const getThings = (_req: Request, res: Response) => {
+export const getThingsController = (_req: Request, res: Response) => {
   console.log("Things got delivered by GET method.");
 
   res.status(200).json({ knownThings });
 };
 
-export const getThingById = (req: Request, res: Response) => {
+export const getThingByIdController = (req: Request, res: Response) => {
   const { idThing } = req.params;
 
   const foundThing = knownThings.find((thing) => thing.id === Number(idThing));
@@ -19,7 +19,7 @@ export const getThingById = (req: Request, res: Response) => {
   res.status(200).json(foundThing);
 };
 
-export const deleteThingById = (req: Request, res: Response) => {
+export const deleteThingByIdController = (req: Request, res: Response) => {
   const { idThing } = req.params;
 
   const thingToDeletePosition = knownThings.findIndex(
@@ -31,7 +31,10 @@ export const deleteThingById = (req: Request, res: Response) => {
   res.status(200).json({ message: `Thing nº${idThing} got deleted` });
 };
 
-export const createThingByBody = (req: CustomRequest<Thing>, res: Response) => {
+export const createThingController = (
+  req: CustomRequest<Thing>,
+  res: Response
+) => {
   const newThing: Thing = req.body;
 
   if (!newThing) {
