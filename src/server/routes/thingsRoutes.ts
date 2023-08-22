@@ -1,17 +1,17 @@
 import express from "express";
 import {
-  createThingByBody,
-  deleteThingById,
-  getThingById,
-  getThings,
-} from "../controllers/thingsControllers.js";
+  createThingController,
+  deleteThingByIdController,
+  getThingByIdController,
+  getThingsController,
+} from "../controllers/thingsControllers/thingsControllers.js";
 
 export const thingsRoutes = express.Router();
 
-thingsRoutes.get("/", getThings);
-thingsRoutes.get("/:idThing", getThingById);
-thingsRoutes.delete("/:idThing", deleteThingById);
+thingsRoutes.get("/", getThingsController);
+thingsRoutes.get("/:idThing", getThingByIdController);
+thingsRoutes.delete("/:idThing", deleteThingByIdController);
 
-thingsRoutes.post("/", createThingByBody);
+thingsRoutes.post("/", createThingController);
 
 export default thingsRoutes;
