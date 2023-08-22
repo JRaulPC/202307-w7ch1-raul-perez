@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  createThingController,
   deleteThingByIdController,
   getThingByIdController,
   getThingsController,
@@ -11,7 +10,5 @@ export const thingsRoutes = express.Router();
 thingsRoutes.get("/", getThingsController);
 thingsRoutes.get("/:idThing", getThingByIdController);
 thingsRoutes.delete("/:idThing", deleteThingByIdController);
-
-thingsRoutes.post("/", createThingController);
 
 export default thingsRoutes;
