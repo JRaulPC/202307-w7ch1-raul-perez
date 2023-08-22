@@ -24,6 +24,7 @@
       {
         "capIsNewExceptions": ["Router"]
       }
-    ]
+    ],
+    "no-implicit-coercion": "off"
   }
 }
