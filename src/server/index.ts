@@ -1,7 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import { endpointNotFound, generalErrorHandler } from "./middlewares/errors.js";
-import thingsRoutes from "./routes/thingsRoutes.js";
+import thingsRoutes from "./routers/thingsRoutes.js";
 
 export const app = express();
 
