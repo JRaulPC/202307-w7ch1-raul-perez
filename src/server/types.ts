@@ -1,3 +1,3 @@
 import type { Request } from "express";
 
-export type ParamIdRequest = Request<{ userId: string }>;
+export type ParamIdRequest = Request<{ idThing: string }>;
