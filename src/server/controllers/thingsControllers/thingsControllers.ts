@@ -1,35 +1,34 @@
 import { default as debugCreator } from "debug";
 import { type NextFunction, type Request, type Response } from "express";
+import CustomError from "../../../CustomError/CustomError.js";
 import knownThings from "../../data/things.js";
+import Thing from "../../database/models/Thing.js";
 import { type ParamIdRequest } from "../../types.js";
-import CustomError from "../CustomError/CustomError.js";
 
 const debug = debugCreator("things:server:error");
 
-export const getThingsController = (
-  _req: Request,
-  res: Response,
-  _next: NextFunction
-) => {
-  res.status(200).json({ knownThings });
+export const getThingsController = async (_req: Request, res: Response) => {
+  const things = await Thing.find().exec();
+
+  res.status(200).json({ things });
 };
 
-export const getThingByIdController = (
+export const getThingByIdController = async (
   req: ParamIdRequest,
   res: Response,
   next: NextFunction
 ) => {
   const { idThing } = req.params;
 
-  const foundThing = knownThings.find((thing) => thing.id === +idThing)!;
+  const thing = await Thing.findById(idThing).exec();
 
-  if (typeof foundThing === "undefined") {
+  if (typeof thing === "undefined") {
     next(new CustomError("Error, can't get thing", 404));
     debug(`Error, can't get thing with id ${idThing}`);
     return;
   }
 
-  res.status(200).json(foundThing);
+  res.status(200).json({ thing });
 };
 
 export const deleteThingByIdController = (req: Request, res: Response) => {
