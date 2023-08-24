@@ -83,9 +83,9 @@ describe("Given a getthingByIdController controller", () => {
       });
 
       const newError = new CustomError(
-        "Error, can't get thing",
+        "Error, can't find thing!",
         404,
-        "Error, can't get thing"
+        "Error, can't find thing!"
       );
 
       await getThingByIdController(
