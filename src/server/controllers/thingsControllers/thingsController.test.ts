@@ -2,8 +2,8 @@ import { type NextFunction, type Request, type Response } from "express";
 import mongoose from "mongoose";
 import CustomError from "../../../CustomError/CustomError.js";
 import Thing from "../../database/models/Thing.js";
-import { type ThingStructure } from "../../database/types.js";
-import { type ParamIdRequest } from "../../types.js";
+
+import { type ParamIdRequest, type ThingStructure } from "../../types.js";
 import {
   getThingByIdController,
   getThingsController,
