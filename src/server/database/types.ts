@@ -1,5 +1,5 @@
 export interface ThingStructure {
-  id: number;
+  id: string;
   name: string;
   inProgress: boolean;
 }

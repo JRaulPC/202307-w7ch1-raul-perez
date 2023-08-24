@@ -1,6 +1,7 @@
 import { type NextFunction, type Request, type Response } from "express";
+import mongoose from "mongoose";
 import CustomError from "../../../CustomError/CustomError.js";
-
+import Thing from "../../database/models/Thing.js";
 import { type ThingStructure } from "../../database/types.js";
 import { type ParamIdRequest } from "../../types.js";
 import {
@@ -8,7 +9,6 @@ import {
   getThingsController,
 } from "./thingsControllers.js";
 
-const req: Partial<Request> = {};
 const res: Partial<Response> = {
   status: jest.fn().mockReturnThis(),
   json: jest.fn(),
@@ -16,31 +16,43 @@ const res: Partial<Response> = {
 const next: Partial<NextFunction> = {};
 
 const knownThings: ThingStructure[] = [
-  { id: 1, name: "Anger management", inProgress: true },
-  { id: 2, name: "React", inProgress: true },
-  { id: 3, name: "No seguir copiando", inProgress: true },
+  { id: "1", name: "Anger management", inProgress: true },
+  { id: "2", name: "React", inProgress: true },
+  { id: "3", name: "No seguir copiando", inProgress: true },
 ];
 
-const expectedStatusCode = 200;
+const mockedThingId = new mongoose.Types.ObjectId().toString();
+
+const req: Partial<ParamIdRequest> = {
+  params: { idThing: mockedThingId },
+};
+
+const mockedThing: ThingStructure = {
+  id: mockedThingId,
+  name: "testing",
+  inProgress: true,
+};
 
 beforeEach(() => {
   jest.clearAllMocks();
+  Thing.find = jest.fn().mockReturnValue({
+    exec: jest.fn().mockResolvedValue(mockedThing),
+  });
 });
 
 describe("Given a getThingsController controller", () => {
   describe("When it receives a request", () => {
     test("Then it should call its method status with 200", async () => {
+      const expectedStatusCode = 200;
       await getThingsController(req as Request, res as Response);
 
       expect(res.status).toHaveBeenCalledWith(expectedStatusCode);
     });
 
-    test("Then it should call its json method", async () => {
+    test("Then it should call its json method with a collection of things", async () => {
       await getThingsController(req as Request, res as Response);
 
-      const timesCalled = 1;
-
-      expect(res.json).toHaveBeenCalledTimes(timesCalled);
+      expect(res.json).toHaveBeenCalledWith({ knownThings });
     });
   });
 });
@@ -48,11 +60,13 @@ describe("Given a getThingsController controller", () => {
 describe("Given a getthingByIdController controller", () => {
   describe("When it receives a request with 1 as request parameter", () => {
     test("Then it should call it's json method with a the thing 'anger management", async () => {
-      const req: Partial<Request<{ idThing: string }>> = {
-        params: { idThing: "1" },
-      };
+      const mockedThingId = new mongoose.Types.ObjectId().toString();
 
-      const thing = knownThings.find((thing) => thing.id === 1);
+      const mockedThing: ThingStructure = {
+        id: mockedThingId,
+        name: "testing",
+        inProgress: true,
+      };
 
       await getThingByIdController(
         req as ParamIdRequest,
@@ -60,7 +74,7 @@ describe("Given a getthingByIdController controller", () => {
         next as NextFunction
       );
 
-      expect(res.json).toHaveBeenCalledWith(thing);
+      expect(res.json).toHaveBeenCalledWith(mockedThing);
     });
   });
 
@@ -69,7 +83,11 @@ describe("Given a getthingByIdController controller", () => {
       const req: Partial<Request<{ idThing: string }>> = {
         params: { idThing: "4" },
       };
-      const newError = new CustomError("Error, can't get thing", 404);
+      const newError = new CustomError(
+        "Error, can't get thing",
+        404,
+        "Error, can't get thing"
+      );
       const next: Partial<NextFunction> = jest.fn();
 
       await getThingByIdController(
