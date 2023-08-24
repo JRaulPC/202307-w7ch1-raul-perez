@@ -2,6 +2,7 @@ import { default as debugCreator } from "debug";
 import { type NextFunction, type Request, type Response } from "express";
 import CustomError from "../../../CustomError/CustomError.js";
 import Thing from "../../database/models/Thing.js";
+import { type ParamIdRequest } from "../../types.js";
 
 const debug = debugCreator("things:server:error");
 
@@ -12,7 +13,7 @@ export const getThingsController = async (_req: Request, res: Response) => {
 };
 
 export const getThingByIdController = async (
-  req: Request<{ idThing: string }>,
+  req: ParamIdRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -23,7 +24,7 @@ export const getThingByIdController = async (
 
     if (typeof thing === "undefined") {
       next(
-        new CustomError("Error, can't get thing", 404, "Error can't get things")
+        new CustomError("Error,find thing!", 404, "Error can't find thing!")
       );
       debug(`Error, can't get thing with id ${idThing}`);
       return;
@@ -33,7 +34,7 @@ export const getThingByIdController = async (
   } catch (error: unknown) {
     const customError = new CustomError(
       "Error, can't get thing",
-      404,
+      500,
       (error as Error).message
     );
     next(customError);

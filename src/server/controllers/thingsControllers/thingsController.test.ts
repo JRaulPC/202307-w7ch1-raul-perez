@@ -13,9 +13,10 @@ const res: Partial<Response> = {
   status: jest.fn().mockReturnThis(),
   json: jest.fn(),
 };
-const next: Partial<NextFunction> = {};
 
-const knownThings: ThingStructure[] = [
+const next: NextFunction = jest.fn();
+
+const things: ThingStructure[] = [
   { id: "1", name: "Anger management", inProgress: true },
   { id: "2", name: "React", inProgress: true },
   { id: "3", name: "No seguir copiando", inProgress: true },
@@ -35,12 +36,13 @@ const mockedThing: ThingStructure = {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  Thing.find = jest.fn().mockReturnValue({
-    exec: jest.fn().mockResolvedValue(mockedThing),
-  });
 });
 
 describe("Given a getThingsController controller", () => {
+  Thing.find = jest.fn().mockReturnValue({
+    exec: jest.fn().mockResolvedValue(things),
+  });
+
   describe("When it receives a request", () => {
     test("Then it should call its method status with 200", async () => {
       const expectedStatusCode = 200;
@@ -52,51 +54,47 @@ describe("Given a getThingsController controller", () => {
     test("Then it should call its json method with a collection of things", async () => {
       await getThingsController(req as Request, res as Response);
 
-      expect(res.json).toHaveBeenCalledWith({ knownThings });
+      expect(res.json).toHaveBeenCalledWith({ things });
     });
   });
 });
 
 describe("Given a getthingByIdController controller", () => {
-  describe("When it receives a request with 1 as request parameter", () => {
-    test("Then it should call it's json method with a the thing 'anger management", async () => {
-      const mockedThingId = new mongoose.Types.ObjectId().toString();
+  Thing.findById = jest.fn().mockReturnValue({
+    exec: jest.fn().mockResolvedValue(mockedThing),
+  });
 
-      const mockedThing: ThingStructure = {
-        id: mockedThingId,
-        name: "testing",
-        inProgress: true,
-      };
-
+  describe("When it receives a request with a hashed id as request parameter", () => {
+    test("Then it should call it's json method with the thing 'testing' ", async () => {
       await getThingByIdController(
         req as ParamIdRequest,
         res as Response,
-        next as NextFunction
+        next
       );
 
-      expect(res.json).toHaveBeenCalledWith(mockedThing);
+      expect(res.json).toHaveBeenCalledWith({ thing: mockedThing });
     });
   });
 
   describe("When it receives a request with 4 as request parameter", () => {
     test("Then it should throw a custom error with the message 'Error, can't get thing', and the status code 404", async () => {
-      const req: Partial<Request<{ idThing: string }>> = {
-        params: { idThing: "4" },
-      };
+      Thing.findById = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(undefined),
+      });
+
       const newError = new CustomError(
         "Error, can't get thing",
         404,
         "Error, can't get thing"
       );
-      const next: Partial<NextFunction> = jest.fn();
 
       await getThingByIdController(
         req as ParamIdRequest,
         res as Response,
-        next as NextFunction
+        next
       );
 
-      expect(next).toHaveBeenCalledWith(newError);
+      expect(next).toBeCalledWith(newError);
     });
   });
 });
