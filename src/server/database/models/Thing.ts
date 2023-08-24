@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { type ThingStructure } from "../types";
+import { type ThingStructure } from "../../types";
 
 const thingSchema = new Schema<ThingStructure>({
   name: {
