@@ -24,7 +24,11 @@ export const getThingByIdController = async (
 
     if (typeof thing === "undefined") {
       next(
-        new CustomError("Error,find thing!", 404, "Error can't find thing!")
+        new CustomError(
+          "Error, can't find thing!",
+          404,
+          "Error, can't find thing!"
+        )
       );
       debug(`Error, can't get thing with id ${idThing}`);
       return;
